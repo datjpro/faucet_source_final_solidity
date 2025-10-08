@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"; //react hooks: useState vs useEffec
 import "./App.css";
 import Web3 from "web3"; // thư viện để tương tác với blockchain Ethereum
 import detectEthereumProvider from "@metamask/detect-provider"; // package của Metamask để phát hiện Provide(người dùng)
+import { loadContract } from "./utils/load-contract";
 
 function App() {
   //State Management:
@@ -18,11 +19,12 @@ function App() {
     const loadProvider = async () => {
       try {
         const provider = await detectEthereumProvider(); // biến provider sẽ chứa đối tượng được phát hiện ví
-
+        const contract = await loadContract("Faucet");
         if (provider) {
           setWeb3Api({
             web3: new Web3(provider),
             provider,
+            contract,
           }); // nếu tìm thấy provider sẽ tạo ra một web3 instance(cầu nối giữa blockchain vs javascript)
         } else {
           setError("Please install MetaMask!");
