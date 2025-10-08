@@ -777,7 +777,7 @@
   "sourceMap": "59:407:1:-:0;;;86:33;;;-1:-1:-1;;;;;;86:33:1;109:10;86:33;;;59:407;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "59:407:1:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;126:36;;;;;;;;;160:25:2;;;148:2;133:18;126:36:1;;;;;;;;86:33;;;;;-1:-1:-1;;;;;86:33:1;;;;;;-1:-1:-1;;;;;360:32:2;;;342:51;;330:2;315:18;86:33:1;196:203:2;352:111:1;;;;;;:::i;:::-;;:::i;:::-;;;240:5;;-1:-1:-1;;;;;240:5:1;226:10;:19;204:120;;;;-1:-1:-1;;;204:120:1;;791:2:2;204:120:1;;;773:21:2;830:2;810:18;;;803:30;869:34;849:18;;;842:62;-1:-1:-1;;;920:18:2;;;913:49;979:19;;204:120:1;;;;;;;;419:24:::1;:36:::0;352:111::o;404:180:2:-;463:6;516:2;504:9;495:7;491:23;487:32;484:52;;;532:1;529;522:12;484:52;-1:-1:-1;555:23:2;;404:180;-1:-1:-1;404:180:2:o",
   "source": "//SPDX-License-Identifier: MIT\r\npragma solidity 0.8.21;\r\n\r\ncontract Migrations {\r\n    address public owner = msg.sender;\r\n    uint public last_completed_migration;\r\n\r\n    modifier restricted() {\r\n        require(\r\n            msg.sender == owner,\r\n            \"This function is restricted to the contract's owner\"\r\n        );\r\n        _;\r\n    }\r\n\r\n    function setCompleted(uint completed) public restricted {\r\n        last_completed_migration = completed;\r\n    }\r\n}\r\n",
-  "sourcePath": "D:\\faucet_source_final_solidity\\contracts\\Migrations.sol",
+  "sourcePath": "D:\\Demo\\faucet_source_final_solidity\\contracts\\Migrations.sol",
   "ast": {
     "absolutePath": "project:/contracts/Migrations.sol",
     "exportedSymbols": {
@@ -1183,15 +1183,21 @@
     "version": "0.8.21+commit.d9974bed.Emscripten.clang"
   },
   "networks": {
+    "1337": {
+      "events": {},
+      "links": {},
+      "address": "0x8FE6145a0b69041699812c0eeeE728D61aa5E640",
+      "transactionHash": "0xeca4bce1b682ecea37b8a9cd830d51d1a74e85e88f23f611e992533ea676bf0d"
+    },
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x674cE84F478f75D526e1875E2B8e3279a5F240B6",
-      "transactionHash": "0xafa4c323c98a412fb589846e33fdbce709f1ff56050780c7406d5e141ba93a3c"
+      "address": "0x37aF61a07bC9CAF6Aa6c0554F351379735f04B31",
+      "transactionHash": "0x53252588689ca6e21bf13a6670681ba12796f265d7b6d419168c4e2e5704bfcc"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-10-03T07:22:18.697Z",
+  "updatedAt": "2025-10-08T07:56:14.699Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
