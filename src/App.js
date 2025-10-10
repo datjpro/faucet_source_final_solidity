@@ -124,7 +124,7 @@ function App() {
       }
     }; // biến accounts sẽ đựa lưu thông tin từ ví điện tử và trả về ví đầu tiên trong ví
     if (web3Api.web3) getAccount();
-  }, [web3Api.web3]); //Dependency Array, chạy hàm này mỗi khi web3Api.web3 thay đổi giá trị
+  }, [web3Api.web3, web3Api.contract]); //Dependency Array, chạy hàm này mỗi khi web3Api.web3 hoặc web3Api.contract thay đổi giá trị
 
   // Contract Balance Loading (useEffect thứ ba): Cập nhật balance của contract
   useEffect(() => {
@@ -134,7 +134,7 @@ function App() {
       }
     };
     updateContractBalance();
-  }, [web3Api.contract]); // Chạy khi contract thay đổi
+  }, [web3Api.contract, web3Api.web3]); // Chạy khi contract hoặc web3 thay đổi
 
   const connectWallet = async () => {
     if (web3Api.provider) {
@@ -289,7 +289,7 @@ function App() {
       const result = await web3Api.contract.addFunds({
         from: account,
         value: amountInWei,
-        gas: 3000000,
+        gas: 300000,
         gasPrice: web3Api.web3.utils.toWei("20", "gwei"),
       });
 

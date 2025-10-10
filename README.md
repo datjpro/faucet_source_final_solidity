@@ -1,70 +1,219 @@
-# Getting Started with Create React App
+# 💧 Ethereum Faucet DApp
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Ứng dụng Web3 phi tập trung (DApp) cho phép người dùng donate và withdraw Ethereum từ một smart contract Faucet trên blockchain.
 
-## Available Scripts
+## 🌟 Tính năng
 
-In the project directory, you can run:
+- **Connect Wallet**: Kết nối với ví MetaMask
+- **Donate ETH**: Gửi Ethereum vào smart contract
+- **Withdraw ETH**: Rút tối đa 1 ETH mỗi lần từ contract
+- **Real-time Balance**: Hiển thị số dư của contract và ví người dùng
+- **Network Detection**: Tự động phát hiện và hướng dẫn chuyển đổi network
 
-### `npm start`
+## 🛠️ Công nghệ sử dụng
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Frontend**: React.js, Bulma CSS
+- **Blockchain**: Solidity, Truffle
+- **Web3**: Web3.js, MetaMask
+- **Development**: Ganache
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📋 Yêu cầu hệ thống
 
-### `npm test`
+- Node.js (v18.19.0 hoặc cao hơn)
+- npm hoặc yarn
+- MetaMask extension
+- Ganache CLI hoặc Ganache GUI
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 Cài đặt và chạy dự án
 
-### `npm run build`
+### Bước 1: Clone dự án
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+git clone <repository-url>
+cd faucet_source_final_solidity
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Bước 2: Cài đặt dependencies
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm install
+```
 
-### `npm run eject`
+### Bước 3: Cài đặt và chạy Ganache
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### Sử dụng Ganache CLI:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm install -g ganache-cli
+ganache-cli --host 127.0.0.1 --port 7546 --networkId 1337
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Hoặc sử dụng Ganache GUI:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. Tải và cài đặt [Ganache](https://trufflesuite.com/ganache/)
+2. Tạo workspace mới với cấu hình:
+   - Server: 127.0.0.1:7546
+   - Network ID: 1337
 
-## Learn More
+### Bước 4: Compile và deploy smart contract
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+# Compile contract
+npx truffle compile
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Deploy contract lên Ganache
+npx truffle migrate --reset --network development
+```
 
-### Code Splitting
+### Bước 5: Chạy ứng dụng React
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+npm start
+```
 
-### Analyzing the Bundle Size
+Ứng dụng sẽ mở tại [http://localhost:3000](http://localhost:3000)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## ⚙️ Cấu hình MetaMask
 
-### Making a Progressive Web App
+### 1. Thêm Ganache Network vào MetaMask:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **Network Name**: Ganache
+- **RPC URL**: http://127.0.0.1:7546
+- **Chain ID**: 1337
+- **Currency Symbol**: ETH
 
-### Advanced Configuration
+### 2. Import tài khoản từ Ganache:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. Copy private key từ Ganache
+2. Trong MetaMask: Account Menu → Import Account
+3. Paste private key và import
 
-### Deployment
+## 💡 Cách sử dụng
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### 1. Kết nối ví
 
-### `npm run build` fails to minify
+- Click nút "Connect Wallet"
+- Chấp nhận kết nối trong MetaMask
+- Đảm bảo đang sử dụng Ganache network (Network ID: 1337)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 2. Donate ETH
+
+- Nhập số lượng ETH muốn donate
+- Click "Donate"
+- Confirm transaction trong MetaMask
+
+### 3. Withdraw ETH
+
+- Nhập số lượng ETH muốn rút (tối đa 1 ETH)
+- Click "Withdraw"
+- Confirm transaction trong MetaMask
+
+## 📁 Cấu trúc dự án
+
+```
+faucet_source_final_solidity/
+├── contracts/              # Smart contracts
+│   ├── Faucet.sol          # Contract chính
+│   └── Migrations.sol      # Migration contract
+├── migrations/             # Deploy scripts
+│   ├── 1_initial_migration.js
+│   └── 2_faucet_migration.js
+├── public/
+│   └── contracts/          # Compiled contract artifacts
+├── src/
+│   ├── App.js              # Component chính
+│   ├── App.css             # Styles
+│   └── utils/
+│       └── load-contract.js # Contract loading utility
+├── truffle-config.js       # Truffle configuration
+├── config-overrides.js     # Webpack configuration
+└── package.json            # Dependencies
+```
+
+## 🔧 Smart Contract Functions
+
+### `addFunds()`
+
+- **Mô tả**: Nhận ETH và thêm người gửi vào danh sách funders
+- **Payable**: Có
+- **Gas estimate**: ~50,000
+
+### `withdraw(uint256 withdrawAmount)`
+
+- **Mô tả**: Rút ETH từ contract (tối đa 1 ETH)
+- **Tham số**: `withdrawAmount` - Số wei muốn rút
+- **Modifier**: `limitWithdraw` - Giới hạn 1 ETH mỗi lần
+- **Gas estimate**: ~30,000
+
+### `getAllFunders()`
+
+- **Mô tả**: Lấy danh sách tất cả địa chỉ đã donate
+- **Returns**: Array of addresses
+- **View function**: Không tốn gas
+
+## 🐛 Xử lý sự cố
+
+### Lỗi "Contract not deployed"
+
+```bash
+# Redeploy contract
+npx truffle migrate --reset --network development
+```
+
+### Lỗi "Wrong network"
+
+- Chuyển MetaMask sang Ganache network (Chain ID: 1337)
+- Hoặc click nút "Switch to Ganache Network" trong app
+
+### Lỗi "insufficient funds"
+
+- Đảm bảo tài khoản có đủ ETH để trả gas fees
+- Import tài khoản mới từ Ganache với ETH
+
+### App không load được contract
+
+- Kiểm tra Ganache đã chạy chưa
+- Verify contract đã được deploy
+- Click nút "Reload Contract" trong app
+
+## 📊 Gas Estimates
+
+| Function | Gas Used | Gas Price (Gwei) | Cost (ETH) |
+| -------- | -------- | ---------------- | ---------- |
+| addFunds | ~50,000  | 20               | ~0.001     |
+| withdraw | ~30,000  | 20               | ~0.0006    |
+
+## 🚨 Lưu ý bảo mật
+
+- ⚠️ Đây là dự án demo, không sử dụng trên mainnet
+- ⚠️ Private keys được sử dụng trong Ganache chỉ dành cho development
+- ⚠️ Smart contract chưa được audit, không deploy trên production
+
+## 🤝 Đóng góp
+
+1. Fork dự án
+2. Tạo feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Tạo Pull Request
+
+## 📝 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 👥 Tác giả
+
+- **Developer**: [Your Name]
+- **GitHub**: [@datjpro](https://github.com/datjpro)
+
+## 🆘 Hỗ trợ
+
+Nếu gặp vấn đề, vui lòng:
+
+1. Kiểm tra phần [Xử lý sự cố](#-xử-lý-sự-cố)
+2. Tạo issue trên GitHub
+3. Liên hệ qua email hoặc social media
+
+---
+
+**Happy Coding! 🎉**
