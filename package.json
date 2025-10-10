@@ -29,7 +29,11 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "compile": "truffle compile",
+    "migrate": "truffle migrate --reset --network development",
+    "test-contracts": "truffle test",
+    "deploy": "npm run compile && npm run migrate"
   },
   "eslintConfig": {
     "extends": [
@@ -50,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@openzeppelin/test-helpers": "^0.5.16",
     "customize-cra": "^1.0.0",
     "path-browserify": "^1.0.1",
     "prettier": "^3.6.2",
