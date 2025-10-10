@@ -15,7 +15,6 @@
     "crypto-browserify": "^3.12.1",
     "https-browserify": "^1.0.0",
     "os-browserify": "^0.3.0",
-    "path-browserify": "^1.0.1",
     "process": "^0.11.10",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -52,6 +51,7 @@
   },
   "devDependencies": {
     "customize-cra": "^1.0.0",
+    "path-browserify": "^1.0.1",
     "prettier": "^3.6.2",
     "prettier-plugin-solidity": "^2.1.0",
     "react-app-rewired": "^2.2.1"
