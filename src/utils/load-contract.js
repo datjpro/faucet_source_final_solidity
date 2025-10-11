@@ -28,7 +28,7 @@ export const loadContract = async (name, provider) => {
 
     const contractAddress = Artifact.networks[networkId].address;
     const contract = new web3.eth.Contract(Artifact.abi, contractAddress);
-    
+
     console.log("Contract deployed at:", contractAddress);
 
     return contract;
@@ -48,7 +48,7 @@ export const loadContractAt = async (name, address, provider) => {
 
     const Artifact = await res.json();
     const web3 = new Web3(provider);
-    
+
     const contract = new web3.eth.Contract(Artifact.abi, address);
     console.log("Contract instance loaded at:", address);
 

@@ -65,8 +65,11 @@ function App() {
               provider
             );
             console.log("Factory contract loaded:", factoryContract);
-            console.log("Factory contract methods:", Object.keys(factoryContract.methods));
-            
+            console.log(
+              "Factory contract methods:",
+              Object.keys(factoryContract.methods)
+            );
+
             setWeb3Api((prev) => ({
               ...prev,
               factoryContract,
@@ -123,9 +126,11 @@ function App() {
     setIsLoading(true);
     try {
       console.log("Loading funds from factory contract...");
-      const totalFunds = await web3Api.factoryContract.methods.getTotalFaucets().call();
+      const totalFunds = await web3Api.factoryContract.methods
+        .getTotalFaucets()
+        .call();
       console.log("Total funds:", totalFunds);
-      
+
       const fundPromises = [];
 
       for (let i = 0; i < totalFunds; i++) {
@@ -135,7 +140,7 @@ function App() {
       const funds = await Promise.all(fundPromises);
       const validFunds = funds.filter((fund) => fund !== null);
       console.log("Loaded funds:", validFunds);
-      
+
       setAllFunds(validFunds);
 
       // Filter user funds
@@ -158,9 +163,11 @@ function App() {
   const loadFundDetails = async (index) => {
     try {
       console.log(`Loading fund details for index ${index}`);
-      const fundInfo = await web3Api.factoryContract.methods.getFaucetByIndex(index).call();
+      const fundInfo = await web3Api.factoryContract.methods
+        .getFaucetByIndex(index)
+        .call();
       console.log(`Fund info for index ${index}:`, fundInfo);
-      
+
       const [address, owner, balance, totalDonors] = fundInfo;
 
       // Get more details from the fund contract
@@ -179,7 +186,7 @@ function App() {
         totalDonors: totalDonors.toString(),
         totalDonated: web3Api.web3.utils.fromWei(stats.totalDonated, "ether"),
       };
-      
+
       console.log(`Fund details for index ${index}:`, fundDetails);
       return fundDetails;
     } catch (err) {
@@ -244,13 +251,13 @@ function App() {
     try {
       setIsLoading(true);
       console.log("Creating new fund...");
-      
+
       const result = await web3Api.factoryContract.methods.createFaucet().send({
         from: account,
         gas: 3000000,
         gasPrice: web3Api.web3.utils.toWei("20", "gwei"),
       });
-      
+
       console.log("Fund created successfully:", result);
 
       // Reload funds after creation
@@ -468,7 +475,7 @@ function App() {
               <div className="tabs">
                 <ul>
                   <li className={activeTab === "all" ? "is-active" : ""}>
-                    <button 
+                    <button
                       className="button is-white is-borderless"
                       onClick={() => setActiveTab("all")}
                     >
@@ -479,7 +486,7 @@ function App() {
                     </button>
                   </li>
                   <li className={activeTab === "my" ? "is-active" : ""}>
-                    <button 
+                    <button
                       className="button is-white is-borderless"
                       onClick={() => setActiveTab("my")}
                     >
