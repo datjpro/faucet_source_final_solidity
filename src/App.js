@@ -116,41 +116,81 @@ function App() {
     loadAccount();
   }, [web3Api.web3]);
 
-  // Load All Funds
+  // Load All Funds - Simplified version
   const loadAllFunds = async () => {
     if (!web3Api.factoryContract || !web3Api.web3) {
       console.log("Factory contract or web3 not ready");
+      console.log("Factory contract:", !!web3Api.factoryContract);
+      console.log("Web3:", !!web3Api.web3);
       return;
     }
 
     setIsLoading(true);
+    setError(""); // Clear previous errors
+
     try {
-      console.log("Loading funds from factory contract...");
+      console.log("=== LOADING FUNDS START ===");
+      console.log(
+        "Factory contract address:",
+        web3Api.factoryContract.options.address
+      );
+
       const totalFunds = await web3Api.factoryContract.methods
         .getTotalFaucets()
         .call();
-      console.log("Total funds:", totalFunds);
+      console.log("Total funds found:", totalFunds.toString());
 
-      const fundPromises = [];
-
-      for (let i = 0; i < totalFunds; i++) {
-        fundPromises.push(loadFundDetails(i));
+      if (parseInt(totalFunds) === 0) {
+        console.log("No funds created yet");
+        setAllFunds([]);
+        setUserFunds([]);
+        return;
       }
 
-      const funds = await Promise.all(fundPromises);
-      const validFunds = funds.filter((fund) => fund !== null);
-      console.log("Loaded funds:", validFunds);
+      // Load all funds sequentially to avoid issues
+      const loadedFunds = [];
 
-      setAllFunds(validFunds);
+      for (let i = 0; i < parseInt(totalFunds); i++) {
+        try {
+          console.log(`Loading fund ${i}...`);
+          const fundInfo = await web3Api.factoryContract.methods
+            .getFaucetByIndex(i)
+            .call();
+          console.log(`Fund ${i} raw info:`, fundInfo);
+
+          const [address, owner, balance, totalDonors] = fundInfo;
+
+          // Create simplified fund object
+          const fund = {
+            index: i,
+            address: address,
+            owner: owner,
+            balance: web3Api.web3.utils.fromWei(balance, "ether"),
+            totalDonors: totalDonors.toString(),
+            totalDonated: "0", // Default for now
+          };
+
+          console.log(`Fund ${i} processed:`, fund);
+          loadedFunds.push(fund);
+        } catch (fundError) {
+          console.error(`Error loading fund ${i}:`, fundError);
+          // Continue with next fund
+        }
+      }
+
+      console.log("=== ALL FUNDS LOADED ===", loadedFunds);
+      setAllFunds(loadedFunds);
 
       // Filter user funds
       if (account) {
-        const userOwnedFunds = validFunds.filter(
+        const userOwnedFunds = loadedFunds.filter(
           (fund) => fund && fund.owner.toLowerCase() === account.toLowerCase()
         );
-        console.log("User funds:", userOwnedFunds);
+        console.log("User owned funds:", userOwnedFunds);
         setUserFunds(userOwnedFunds);
       }
+
+      console.log("=== LOADING FUNDS COMPLETE ===");
     } catch (err) {
       console.error("Error loading funds:", err);
       setError("Failed to load funds: " + err.message);
@@ -159,45 +199,10 @@ function App() {
     }
   };
 
-  // Load Fund Details
-  const loadFundDetails = async (index) => {
-    try {
-      console.log(`Loading fund details for index ${index}`);
-      const fundInfo = await web3Api.factoryContract.methods
-        .getFaucetByIndex(index)
-        .call();
-      console.log(`Fund info for index ${index}:`, fundInfo);
-
-      const [address, owner, balance, totalDonors] = fundInfo;
-
-      // Get more details from the fund contract
-      const faucetContract = await loadContractAt(
-        "Faucet",
-        address,
-        web3Api.provider
-      );
-      const stats = await faucetContract.methods.getFundStats().call();
-
-      const fundDetails = {
-        index,
-        address,
-        owner,
-        balance: web3Api.web3.utils.fromWei(balance, "ether"),
-        totalDonors: totalDonors.toString(),
-        totalDonated: web3Api.web3.utils.fromWei(stats.totalDonated, "ether"),
-      };
-
-      console.log(`Fund details for index ${index}:`, fundDetails);
-      return fundDetails;
-    } catch (err) {
-      console.error(`Error loading fund ${index}:`, err);
-      return null;
-    }
-  };
-
   // Load funds when factory contract is available
   useEffect(() => {
-    if (web3Api.factoryContract) {
+    if (web3Api.factoryContract && account) {
+      console.log("Factory contract and account ready, loading funds...");
       loadAllFunds();
     }
   }, [web3Api.factoryContract, account]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -250,6 +255,7 @@ function App() {
 
     try {
       setIsLoading(true);
+      setError(""); // Clear previous errors
       console.log("Creating new fund...");
 
       const result = await web3Api.factoryContract.methods.createFaucet().send({
@@ -260,10 +266,8 @@ function App() {
 
       console.log("Fund created successfully:", result);
 
-      // Reload funds after creation
-      setTimeout(() => {
-        loadAllFunds();
-      }, 2000);
+      // Immediately reload funds after creation
+      await loadAllFunds();
 
       alert("Quỹ được tạo thành công!");
     } catch (err) {
@@ -404,6 +408,18 @@ function App() {
           </div>
         )}
 
+        {/* Debug Info */}
+        <div className="notification is-info is-light">
+          <strong>Debug Info:</strong>
+          <br />
+          Network ID: {networkId} | Account:{" "}
+          {account ? `${account.slice(0, 10)}...` : "Not connected"} | Factory
+          Contract: {web3Api.factoryContract ? "✓ Loaded" : "✗ Not loaded"} |
+          All Funds: {allFunds.length} | User Funds: {userFunds.length}
+          <br />
+          Factory Address: {web3Api.factoryContract?.options?.address || "N/A"}
+        </div>
+
         {/* Network Info */}
         <div className="box">
           <div className="level">
@@ -525,8 +541,104 @@ function App() {
                 <span>Làm mới</span>
               </button>
             </div>
+            <div className="level-item">
+              <button
+                className="button is-primary"
+                onClick={async () => {
+                  console.log("=== FORCE RELOAD FUNDS ===");
+                  // Clear current state
+                  setAllFunds([]);
+                  setUserFunds([]);
+                  setError("");
+                  // Force reload
+                  await loadAllFunds();
+                }}
+                disabled={!web3Api.factoryContract || isLoading}
+              >
+                <span className="icon">
+                  <i className="fas fa-redo"></i>
+                </span>
+                <span>Force Reload</span>
+              </button>
+            </div>
+            <div className="level-item">
+              <button
+                className="button is-warning"
+                onClick={async () => {
+                  if (web3Api.factoryContract) {
+                    try {
+                      const total = await web3Api.factoryContract.methods
+                        .getTotalFaucets()
+                        .call();
+                      console.log("Total faucets:", total);
+                      alert(`Total faucets: ${total}`);
+                    } catch (err) {
+                      console.error("Test failed:", err);
+                      alert(`Test failed: ${err.message}`);
+                    }
+                  }
+                }}
+                disabled={!web3Api.factoryContract}
+              >
+                <span className="icon">
+                  <i className="fas fa-bug"></i>
+                </span>
+                <span>Test Contract</span>
+              </button>
+            </div>
+            <div className="level-item">
+              <button
+                className="button is-danger"
+                onClick={async () => {
+                  if (web3Api.factoryContract) {
+                    try {
+                      console.log("Testing fund details loading...");
+                      const total = await web3Api.factoryContract.methods
+                        .getTotalFaucets()
+                        .call();
+                      console.log("Total faucets:", total);
+
+                      if (parseInt(total) > 0) {
+                        const fundInfo = await web3Api.factoryContract.methods
+                          .getFaucetByIndex(0)
+                          .call();
+                        console.log("Fund 0 info:", fundInfo);
+                        alert(
+                          `Fund 0: Address=${fundInfo[0]}, Owner=${fundInfo[1]}`
+                        );
+                      } else {
+                        alert("No funds to test");
+                      }
+                    } catch (err) {
+                      console.error("Test fund details failed:", err);
+                      alert(`Test failed: ${err.message}`);
+                    }
+                  }
+                }}
+                disabled={!web3Api.factoryContract}
+              >
+                <span className="icon">
+                  <i className="fas fa-search"></i>
+                </span>
+                <span>Test Fund Details</span>
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Debug Funds Display */}
+        {allFunds.length > 0 && (
+          <div className="notification is-success is-light">
+            <strong>Loaded {allFunds.length} funds:</strong>
+            <br />
+            {allFunds.map((fund, idx) => (
+              <div key={idx}>
+                Fund {idx}: {fund.address} (Owner: {fund.owner.slice(0, 10)}...,
+                Balance: {fund.balance} ETH)
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Funds List */}
         <div className="section">
